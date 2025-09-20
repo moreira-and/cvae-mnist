@@ -3,7 +3,7 @@ requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [project]
-name = "src"
+name = "cvae-mnist"
 version = "0.0.1"
 description = "The project aims to explore the potential of Conditional Variational Autoencoders (C-VAEs) for generating synthetic data from specific image classes in the MNIST dataset."
 authors = [
@@ -16,10 +16,6 @@ classifiers = [
     "License :: OSI Approved :: MIT License"
 ]
 dependencies = [
-    "black",
-    "flake8",
-    "pytest",
-    "isort",
     "loguru",
     "pip",
     "python-dotenv",
@@ -35,6 +31,25 @@ dependencies = [
     "mlflow (>=3.3.2,<4.0.0)",
 ]
 requires-python = "~=3.10.0"
+
+[tool.poetry]
+packages = [
+  { include = "cvae", from = "src" }
+]
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+flake8 = "*"
+pytest = "*"
+isort = "*"
+
+[project.scripts]
+dataset = "cvae.cli:dataset_main"
+train = "cvae.cli:train_main"
+plot = "cvae.cli:plot_main"
+gen   = "cvae.cli:gen_main"
+experiment = "cvae.cli:experiment_main"
+
 
 [tool.black]
 line-length = 99

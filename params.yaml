@@ -1,14 +1,14 @@
 dataset:
-  batch_size : 64
+  batch_size : 16
   test_batch_size: 1000
   image_size: 28
   num_classes: 10
 
 model:
   latent_dim : 100
-  lr: 0.001
-  momentum: 0.5
   seed: 1
 
 train:
+  lr: 0.001  
+  momentum: 0.5
   epochs: 10

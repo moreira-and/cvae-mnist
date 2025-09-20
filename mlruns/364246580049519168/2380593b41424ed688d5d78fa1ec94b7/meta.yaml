@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Repositories/cvae-mnist/mlruns/364246580049519168/2380593b41424ed688d5d78fa1ec94b7/artifacts
+end_time: 1758392148713
+entry_point_name: ''
+experiment_id: '364246580049519168'
+lifecycle_stage: active
+run_id: 2380593b41424ed688d5d78fa1ec94b7
+run_name: big-cow-456
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1758392148577
+status: 3
+tags: []
+user_id: SAMSUNG

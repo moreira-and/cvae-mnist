@@ -1,98 +1,208 @@
-**C-VAE MNIST**
+# 🖼️ C-VAE MNIST
 
-- Generate MNIST digits with a Conditional Variational Autoencoder (CVAE). This project covers data preparation, training, sample generation, and experiment tracking with MLflow (local by default, optional Docker server).
+This project trains a **Conditional Variational Autoencoder (CVAE)** to generate handwritten digits from the MNIST dataset (images of 0–9).
+You’ll learn how to prepare the data, train the model, create new digits, and keep track of your experiments.
 
-**Overview**
+---
 
-- Task: learn the conditional distribution p(x|y) and generate 28x28 images conditioned on the digit y ∈ {0,…,9}.
-- Main code in `src/` with a simple pipeline: data → train → generate.
-- Supporting notebook in `notebooks/quick_start.ipynb`.
+## 🤔 What’s a CVAE?
 
-**Requirements**
+* A **Variational Autoencoder (VAE)** is a type of neural network that learns to compress data into a smaller space (latent space) and then reconstruct it.
+* A **Conditional VAE (CVAE)** goes one step further: it lets you **control what gets generated**.
 
-- Python 3.10
-- Poetry (dependency management)
-- Git
-- Docker and Docker Compose (optional, for MLflow server)
-- CUDA GPU (optional; speeds up training)
+  * Example: you can ask it to generate the digit *“6”* instead of random digits.
 
-**Installation**
+---
 
-- Clone and install dependencies:
-  - `git clone <this-repo> && cd cvae-mnist`
-  - `poetry env use 3.10`
-  - `poetry install`
-  - (optional) `poetry shell`
+## 📊 Why MLflow?
 
-**Quick Start**
+* MLflow is a tool that **keeps track of your experiments**.
+* Every time you train, it saves the parameters you used, results, and models, so you don’t lose track.
+* By default, it works locally. You can also run it on a server with Docker.
 
-- Prepare MNIST (download and save tensors):
-  - `make data` or `python src/dataset.py`
-- Train the CVAE:
-  - `python src/modeling/train.py`
-- Generate an image for a digit (e.g., 6):
-  - `python src/modeling/generate.py --digit 6`
-- Notebook:
-  - `poetry run jupyter lab` and open `notebooks/quick_start.ipynb`
+---
 
-**Expected Outputs**
+## 🛠️ What You Need
 
-- `data/processed/`: `.pt` files with train/test images and labels.
-- `models/`: saved model weights (`model.pth`) and decoder (`decoder.pth`).
-- `reports/figures/`: generated images, e.g., `cvae_digit6.png`.
-- `mlruns/`: MLflow local directory (default tracking).
+* **Python 3.10**
+* [Poetry](https://python-poetry.org/)
+* Git
+* *(Optional)* GPU (for faster training)
 
-**Hyperparameters & Config**
+---
 
-- `params.yaml:1`: sets `dataset.batch_size`, `dataset.image_size`, `model.latent_dim`, `train.epochs`, etc.
-- `src/config.py:1`: paths, loads `params.yaml`, and sets `mlflow.set_tracking_uri` to `mlruns/`.
+## 📦 Install the Project
 
-**MLflow**
+```bash
+git clone https://github.com/moreira-and/cvae-mnist.git && cd cvae-mnist
+poetry build
+poetry install
+poetry shell   # optional
+```
 
-- Local (default): tracking in `mlruns/`.
-  - Local UI: `poetry run mlflow ui --backend-store-uri mlruns --host 0.0.0.0 --port 5000`
-- Server with Docker (Postgres + MinIO):
-  - File: `mlflow-server/compose.yaml:1`
-  - Start services: `cd mlflow-server && docker compose up -d`
-  - Access `http://localhost:5000` and point the project in `src/config.py:1`:
-    - `mlflow.set_tracking_uri("http://localhost:5000")`
+---
 
-**Training (CLI)**
+## 🚀 How to Run It
 
-- Script: `src/modeling/train.py:1` (Typer app entry).
-- Useful args (default from `params.yaml`):
-  - `--latent_dim`, `--batch_size`, `--num_epochs`, `--lr`, `--momentum`, `--num_classes`.
-- Example: `python src/modeling/train.py --latent_dim 100 --num_epochs 10`
+### 1. Prepare the dataset (CLI)
 
-**Generation (CLI)**
+```bash
+poetry run dataset
+# saves tensors under data/processed/
+```
 
-- Script: `src/modeling/generate.py:1`
-- Example: `python src/modeling/generate.py --digit 7` → `reports/figures/cvae_digit7.png`
+### 2. Train the model (CLI)
 
-**Project Structure**
+```bash
+poetry run train
+# common flags: --latent_dim 20 --num_epochs 10 --batch_size 128 --lr 0.001
+```
 
-- `data/` data at different stages (created on demand)
-- `mlflow-server/` docker-compose for MLflow + Postgres + MinIO
-- `models/` training artifacts (`.pth`)
-- `notebooks/` Jupyter notebooks
-- `references/` reference materials (VAE, CVAE)
-- `reports/` outputs and figures
-- `src/` source code (config, dataset, modeling)
-- `params.yaml` hyperparameters
-- `Makefile` automations (`requirements`, `data`, `lint`, `format`, `test`)
+### 3. Generate a digit (example: “6”)
 
-**Useful Commands (Makefile)**
+```bash
+poetry run gen --digit 6
+# writes reports/figures/cvae_digit6.png
+```
 
-- `make requirements` install dependencies
-- `make data` prepare MNIST dataset
-- `make lint` style checks (flake8, isort, black --check)
-- `make format` code formatting (isort, black)
-- `make test` run tests (if present)
+### 4. Plot comparison grid (CLI)
 
-**License**
+```bash
+poetry run plot
+# writes reports/figures/cvae_comparison.png
+```
 
-- MIT (see `LICENSE`)
+### 5. End-to-end experiment (CLI)
 
-**Credits**
+```bash
+poetry run experiment --do-data --do-train --do-plots
+# use --no-do-data / --no-do-train / --no-do-plots to skip steps
+```
 
-- CVAE implementation in PyTorch with one-hot conditioning. Main code: `src/modeling/models/cvae.py:1`, `src/modeling/models/conditional_encoder.py:1`, `src/modeling/models/conditional_decoder.py:1`, utilities in `src/modeling/utils.py:1`.
+### 6. Try the Jupyter notebook
+
+
+- Open [notebooks/quick_start.ipynb](notebooks/quick_start.ipynb) and Run All.
+
+---
+
+## 📂 Where Things Are Saved
+
+* `data/processed/` → dataset files (train/test splits)
+* `models/` → saved models (`model.pth`, `decoder.pth`)
+* `reports/figures/` → generated images (e.g., `cvae_digit6.png`)
+* `mlruns/` → logs of your training runs (for MLflow)
+
+---
+
+## ⚙️ Settings
+
+* `params.yaml` → main settings like batch size, epochs, latent dimension
+* `src/cvae/config.py` → connects everything and points MLflow to the right place
+
+---
+
+## 📊 Using MLflow
+
+### Local (default)
+
+```bash
+poetry run mlflow ui --backend-store-uri mlruns --host 0.0.0.0 --port 5000
+```
+
+Open: [http://localhost:5000](http://localhost:5000)
+
+---
+
+## CLI Reference
+
+- `dataset` — downloads and preprocesses MNIST into `data/processed/`.
+- `train` — trains the CVAE. Flags: `--latent_dim`, `--num_epochs`, `--batch_size`, `--test_batch_size`, `--lr`, `--momentum`, `--seed`.
+- `gen` — generates a digit image. Flag: `--digit|-d` (0–9). Outputs to `reports/figures/cvae_digit{d}.png`.
+- `plot` — creates comparison grid at `reports/figures/cvae_comparison.png`.
+- `experiment` — runs `dataset` → `train` → `plot`. Flags: `--do-data/--no-do-data`, `--do-train/--no-do-train`, `--do-plots/--no-do-plots`.
+### Training with custom settings
+
+```bash
+poetry run train --latent_dim 100 --num_epochs 10 --batch_size 128 --lr 0.001
+```
+
+### Generate digit “7”
+
+```bash
+poetry run gen --digit 7
+# creates → reports/figures/cvae_digit7.png
+```
+
+---
+
+## 📸 Results
+
+After training, the CVAE can generate digits conditioned on the number you choose.
+
+Here are examples of generated digits (y = 0–9):
+
+![cvae_comparison](reports/figures/cvae_comparison.png)
+
+> Tip: If you don’t see results like this right away, try training for more epochs (e.g., `--num_epochs 20`) or increasing the latent dimension in [paramns.yaml](params.yaml).
+
+---
+
+## 📁 Project Layout
+
+```
+cvae-mnist/
+  - src/
+    - cvae/
+      - __main__.py        # enables `python -m cvae` (help)
+      - cli.py             # console entrypoints wrappers
+      - config.py          # paths, mlflow, device, params
+      - api.py             # optional FastAPI service
+      - service/
+        - dataset.py       # dataset preparation
+        - train.py         # training loop
+        - gen.py           # inference / image generation
+        - plots.py         # visualization utilities
+        - utils.py         # data loader, loss, save_model
+        - models/
+          - nn_cvae.py
+          - conditional_encoder.py
+          - conditional_decoder.py
+  - notebooks/
+    - quick_start.ipynb
+  - models/              # saved weights (.pth)
+    - model.pth
+    - decoder.pth
+  - reports/
+    - figures/
+      - cvae_comparison.png
+      - cvae_digit5.png
+      - cvae_digit6.png
+      - cvae_digit7.png
+  - params.yaml
+  - Makefile
+  - pyproject.toml
+  - setup.cfg
+  - poetry.lock
+  - LICENSE
+  - README.md
+```
+
+---
+
+## 🔨 Shortcuts (Makefile)
+
+* `make data` → download MNIST
+* `make requirements` → install dependencies
+* `make lint` → check code style
+* `make format` → auto-format code
+* `make test` → run tests (if any)
+
+---
+
+## 📜 License
+
+MIT (see [LICENSE](LICENSE))
+
+
+

@@ -1,12 +1,11 @@
 import time
 
-from loguru import logger
 import torch
 from torchvision import transforms
 from torchvision.datasets import MNIST
 import typer
 
-from src.config import DATA_DIR, PROCESSED_DATA_DIR
+from cvae.config import DATA_DIR, PROCESSED_DATA_DIR, logger
 
 app = typer.Typer()
 

@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Repositories/cvae-mnist/mlruns/364246580049519168/c8967ae0c0064de89eb43f03c65f2201/artifacts
+end_time: 1758400725133
+entry_point_name: ''
+experiment_id: '364246580049519168'
+lifecycle_stage: active
+run_id: c8967ae0c0064de89eb43f03c65f2201
+run_name: fun-fowl-23
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1758400724983
+status: 3
+tags: []
+user_id: SAMSUNG

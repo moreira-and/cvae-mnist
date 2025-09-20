@@ -1,37 +1,15 @@
 import argparse
 import time
 
-from loguru import logger
-import torch
 import torch.optim as optim
 from tqdm import tqdm
 import typer
 
-from src.config import MODELS_DIR, PROCESSED_DATA_DIR, device, params
-from src.modeling.models.cvae import CVAE
-from src.modeling.utils import loss_function, one_hot
+from cvae.config import device, logger, params
+from cvae.service.models.nn_cvae import nn_CVAE
+from cvae.service.utils import get_data_loader, loss_function, one_hot, save_model
 
 app = typer.Typer()
-
-
-def _get_train_data_loader(batch_size: int, train: bool, **kwargs):
-    file_name = "train" if train else "test"
-    path = PROCESSED_DATA_DIR / f"mnist_{file_name}.pt"
-
-    payload = torch.load(path, map_location="cpu")
-    images, labels = payload["images"], payload["labels"]
-
-    dataset = torch.utils.data.TensorDataset(images, labels)
-
-    # Shuffle at each epoch
-    return torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True, **kwargs)
-
-
-def _save_model(model):
-    logger.info("Saving the model.")
-    # Recommended approach: http://pytorch.org/docs/master/notes/serialization.html
-    torch.save(model.cpu().state_dict(), MODELS_DIR / "model.pth")
-    torch.save(model.decoder.state_dict(), MODELS_DIR / "decoder.pth")
 
 
 def get_args():
@@ -76,14 +54,14 @@ def get_args():
     parser.add_argument(
         "--lr",
         type=float,
-        default=params.model.lr,
+        default=params.train.lr,
         metavar="LR",
         help="Learning rate (default from params.yaml)",
     )
     parser.add_argument(
         "--momentum",
         type=float,
-        default=params.model.momentum,
+        default=params.train.momentum,
         metavar="M",
         help="SGD momentum (not used by Adam; kept for compatibility)",
     )
@@ -103,16 +81,20 @@ def main():
 
     args, _ = get_args()
     kwargs = {}
-    train_loader = _get_train_data_loader(args.batch_size, train=True, **kwargs)
+    train_loader = get_data_loader(args.batch_size, train=True, **kwargs)
 
-    logger.info("Dataset loaded.")
+    logger.info(f"Dataset loaded, batch_size: {args.batch_size}.")
 
     # Initialize model and optimizer
-    model = CVAE(input_channels=1, latent_dim=args.latent_dim, num_classes=args.num_classes).to(
+    model = nn_CVAE(input_channels=1, latent_dim=args.latent_dim, num_classes=args.num_classes).to(
         device
     )
+    logger.info(
+        f"Model initialized. Device: {device}, input_channels: {1}, latent_dim: {args.latent_dim}, num_classes: {args.num_classes}."
+    )
+
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
-    logger.info("Model initialized.")
+    logger.info(f"Starting to train. lr: {args.lr}, epochs: {args.num_epochs}.")
     model.train()
 
     for epoch in tqdm(range(args.num_epochs)):
@@ -140,7 +122,7 @@ def main():
             f"Epoch [{epoch+1}/{args.num_epochs}], Loss: {train_loss/len(train_loader.dataset):.4f}"
         )
 
-    _save_model(model)
+    save_model(model)
 
     # -----------------------------------------
     elapsed_time = time.time() - start_time

@@ -1,13 +1,13 @@
 import torch
 import torch.nn as nn
 
-from src.modeling.models.conditional_decoder import ConditionalDecoder
-from src.modeling.models.conditional_encoder import ConditionalEncoder
+from cvae.service.models.conditional_decoder import ConditionalDecoder
+from cvae.service.models.conditional_encoder import ConditionalEncoder
 
 
-class CVAE(nn.Module):
+class nn_CVAE(nn.Module):
     def __init__(self, input_channels, num_classes, latent_dim):
-        super(CVAE, self).__init__()
+        super(nn_CVAE, self).__init__()
         self.encoder = ConditionalEncoder(input_channels, num_classes, latent_dim)
         self.decoder = ConditionalDecoder(latent_dim, num_classes, input_channels)
 

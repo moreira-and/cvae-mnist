@@ -2,15 +2,14 @@ import io
 import json
 import time
 
-from loguru import logger
 from matplotlib import pyplot as plt
 import numpy as np
 import torch
 import typer
 
-from src.config import FIGURES_DIR, MODELS_DIR, params
-from src.modeling.models import CVAE
-from src.modeling.utils import one_hot
+from cvae.config import FIGURES_DIR, MODELS_DIR, device, logger, params
+from cvae.service.models.nn_cvae import nn_CVAE
+from cvae.service.utils import one_hot
 
 app = typer.Typer()
 
@@ -29,7 +28,7 @@ def model_fn():
     )
 
     # Initialize model
-    model = CVAE(input_channels=input_channels, latent_dim=latent_dim, num_classes=num_classes)
+    model = nn_CVAE(input_channels=input_channels, latent_dim=latent_dim, num_classes=num_classes)
     logger.info("CVAE model initialized.")
 
     # Load model state
@@ -113,8 +112,26 @@ def predict_fn(input_data, model):
     return img.squeeze().cpu().numpy()
 
 
-@app.command()
-def main(digit: int = 6):
+def generate_samples() -> np.ndarray:
+
+    model = model_fn()
+
+    latent_dim = params.model.latent_dim
+    num_classes = params.dataset.num_classes
+
+    samples = []
+    with torch.no_grad():
+        for digit in range(num_classes):
+            z = torch.randn(1, latent_dim, device=device)  # [1, Z]
+            y = torch.tensor([digit], dtype=torch.long, device=device)
+            y = one_hot(y, num_classes, device).float()  # [1, C]
+            img = model.decoder(z, y)
+            samples.append(img.squeeze().cpu().numpy())
+    return np.array(samples)
+
+
+@app.command(name="gen")
+def main(digit: int = typer.Option(..., "--digit", "-d", help="Dígito 0-9")):
     """
     Generate a digit image using the trained CVAE decoder and save it to
     `reports/figures/cvae_digit{digit}.png`.
