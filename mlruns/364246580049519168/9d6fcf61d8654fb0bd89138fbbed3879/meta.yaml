@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Repositories/cvae-mnist/mlruns/364246580049519168/9d6fcf61d8654fb0bd89138fbbed3879/artifacts
+end_time: 1758406509673
+entry_point_name: ''
+experiment_id: '364246580049519168'
+lifecycle_stage: active
+run_id: 9d6fcf61d8654fb0bd89138fbbed3879
+run_name: flawless-lynx-628
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1758406509471
+status: 3
+tags: []
+user_id: SAMSUNG

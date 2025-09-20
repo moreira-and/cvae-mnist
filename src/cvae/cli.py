@@ -24,3 +24,7 @@ def plot_main():
 
 def gen_main():
     typer.run(cvae.generate_digit)
+
+
+def eval_main():
+    typer.run(cvae.evaluate_model)

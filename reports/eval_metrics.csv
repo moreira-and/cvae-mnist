@@ -1,0 +1,2 @@
+n_images,bce_per_image,mse_per_image,ssim,psnr
+10000,67.668683,6.45037363,0.915203,21.497921

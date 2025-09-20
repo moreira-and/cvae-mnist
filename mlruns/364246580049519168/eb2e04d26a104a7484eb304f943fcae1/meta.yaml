@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Repositories/cvae-mnist/mlruns/364246580049519168/eb2e04d26a104a7484eb304f943fcae1/artifacts
+end_time: 1758407560800
+entry_point_name: ''
+experiment_id: '364246580049519168'
+lifecycle_stage: active
+run_id: eb2e04d26a104a7484eb304f943fcae1
+run_name: omniscient-shark-718
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1758407560666
+status: 3
+tags: []
+user_id: SAMSUNG

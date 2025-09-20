@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Repositories/cvae-mnist/mlruns/364246580049519168/3ba6717eec4a44ddb1e3f136b9643280/artifacts
+end_time: 1758405819734
+entry_point_name: ''
+experiment_id: '364246580049519168'
+lifecycle_stage: active
+run_id: 3ba6717eec4a44ddb1e3f136b9643280
+run_name: welcoming-dove-219
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1758405819586
+status: 4
+tags: []
+user_id: SAMSUNG

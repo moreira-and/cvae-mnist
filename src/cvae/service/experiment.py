@@ -3,7 +3,7 @@ import time
 import typer
 
 import cvae
-from cvae.config import FIGURES_DIR, MODELS_DIR, logger, mlflow, params
+from cvae.config import FIGURES_DIR, MODELS_DIR, REPORTS_DIR, logger, mlflow, params
 
 app = typer.Typer()
 
@@ -15,6 +15,7 @@ def save_experiment(elapsed_time: float):
         # arquivos individuais -> log_artifact
         mlflow.log_artifact(str(MODELS_DIR / "model.pth"), artifact_path="models")
         mlflow.log_artifact(str(FIGURES_DIR / "cvae_comparison.png"), artifact_path="figures")
+
         # parâmetros -> log_param
         mlflow.log_param("elapsed_time", elapsed_time)
         mlflow.log_param("batch_size", params.dataset.batch_size)
@@ -27,12 +28,15 @@ def save_experiment(elapsed_time: float):
         mlflow.log_param("momentum", params.train.momentum)
         mlflow.log_param("epochs", params.train.epochs)
 
+        mlflow.log_artifact(str(REPORTS_DIR / "eval_metrics.csv"), artifact_path="models")
+
 
 @app.command(name="experiment")
 def main(
     do_data: bool = typer.Option(True, help="Executa etapa de dados"),
     do_train: bool = typer.Option(True, help="Executa treino"),
     do_plots: bool = typer.Option(True, help="Gera plots"),
+    do_eval: bool = typer.Option(False, help="Avalia modelo"),
 ):
 
     t0 = time.time()
@@ -43,6 +47,8 @@ def main(
         cvae.train_model()
     if do_plots:
         cvae.plot_results()
+    if do_eval:
+        cvae.evaluate_model()
     elapsed = time.time() - t0
     save_experiment(elapsed_time=elapsed)
     logger.success(f"Experiment complete in {elapsed:.2f}s")

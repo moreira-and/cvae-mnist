@@ -1,6 +1,6 @@
 dataset:
-  batch_size : 16
-  test_batch_size: 1000
+  batch_size : 128
+  test_batch_size: 128
   image_size: 28
   num_classes: 10
 
@@ -10,5 +10,5 @@ model:
 
 train:
   lr: 0.001  
-  momentum: 0.5
+  momentum: 0.9
   epochs: 10
